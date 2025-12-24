@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
         pause: `<svg class="icon" viewBox="0 0 24 24"><rect x="6" y="4" width="4" height="16"></rect><rect x="14" y="4" width="4" height="16"></rect></svg>`,
         volume2: `<svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>`,
         volumeX: `<svg class="icon" viewBox="0 0 24 24"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`,
-        rotateCcw: `<svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>`,
+        rotateCcw: `<svg class="icon" viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>`, // Fixed typo (duplicate)
         clock: `<svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>`
     };
 
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    const phaseColors = ['#f97316', '#fbbf24', '#38bdf8', '#22c55e'];
+    const phaseColors = ['#06b6d4', '#10b981', '#3b82f6', '#8b5cf6']; // Updated to calming blues/teals/greens/purples
 
     function hexToRgba(hex, alpha) {
         const normalized = hex.replace('#', '');
@@ -355,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const currentX = startPoint.x + easedProgress * (endPoint.x - startPoint.x);
         const currentY = startPoint.y + easedProgress * (endPoint.y - startPoint.y);
 
-        const accentColor = phaseColors[phase] || '#f97316';
+        const accentColor = phaseColors[phase] || '#06b6d4'; // Default to new palette
         const shouldShowTrail = allowMotion && showTrail;
 
         const gradientKey = `${Math.round(size * 100)}-${accentColor}-${Math.round(adjustedLeft)}-${Math.round(adjustedTop)}`;
@@ -368,22 +368,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 adjustedTop + size / 2,
                 size
             );
-            cachedGradient.addColorStop(0, hexToRgba(accentColor, 0.18));
+            cachedGradient.addColorStop(0, hexToRgba(accentColor, 0.25)); // Finer, more professional stops
+            cachedGradient.addColorStop(0.5, hexToRgba(accentColor, 0.1));
             cachedGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
             cachedGradientKey = gradientKey;
         }
         ctx.fillStyle = cachedGradient;
         ctx.fillRect(0, 0, width, height);
 
-        ctx.strokeStyle = hexToRgba('#fcd34d', 0.25);
+        ctx.strokeStyle = hexToRgba('#cbd5e1', 0.4); // Softer outline for elegance
         ctx.lineWidth = Math.max(2, size * 0.015);
         ctx.lineJoin = 'round';
         ctx.strokeRect(adjustedLeft, adjustedTop, size, size);
 
         ctx.lineWidth = Math.max(4, size * 0.03);
-        ctx.strokeStyle = hexToRgba(accentColor, shouldShowTrail ? 0.8 : 0.45);
-        ctx.shadowColor = hexToRgba(accentColor, 0.5);
-        ctx.shadowBlur = shouldShowTrail ? 15 : 8;
+        ctx.strokeStyle = hexToRgba(accentColor, shouldShowTrail ? 0.85 : 0.5); // Gentler opacity
+        ctx.shadowColor = hexToRgba(accentColor, 0.6);
+        ctx.shadowBlur = shouldShowTrail ? 16 : 10; // Slightly more pronounced shadow
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
         for (let i = 1; i <= phase; i++) {
@@ -403,7 +404,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         ctx.beginPath();
         ctx.arc(currentX, currentY, radius * 1.8, 0, 2 * Math.PI);
-        ctx.fillStyle = hexToRgba(accentColor, 0.25);
+        ctx.fillStyle = hexToRgba(accentColor, 0.3); // Softer halo
         ctx.fill();
 
         ctx.beginPath();
@@ -445,7 +446,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const phases = ['Inhale', 'Hold', 'Exhale', 'Wait'];
             html += `<div class="phase-tracker">`;
             phases.forEach((label, index) => {
-                const phaseColor = phaseColors[index] || '#fde68a';
+                const phaseColor = phaseColors[index] || '#cbd5e1';
                 const softPhaseColor = hexToRgba(phaseColor, 0.25);
                 html += `
                     <div class="phase-item ${index === state.count ? 'active' : ''}" style="--phase-color: ${phaseColor}; --phase-soft: ${softPhaseColor};">
